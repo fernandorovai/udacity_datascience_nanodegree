@@ -29,7 +29,8 @@ def parseArgs():
     parser.add_argument('--arch', 
                         type=str, 
                         help='Specify pretrained architecture from torchvision.models',
-                        default='vgg16')
+                        action='store',
+                        choices=['vgg13', 'vgg16', 'densenet161'], default='vgg16')
     
     parser.add_argument('--save_dir', 
                         type=str, 
@@ -62,8 +63,16 @@ def parseArgs():
 # Create classifier model
 def createClassifier(preTrainedModel, hidden_units, output=102):
     logging.info('Creating classifier with {} hidden_units and {} outputs'.format(hidden_units, output))
+    clfInputSize = None
 
-    clfInputSize = preTrainedModel.classifier[0].in_features
+    # VGG has many layer in the classifier, get Linear input size
+    if type(preTrainedModel.classifier) == torch.nn.modules.container.Sequential:
+        clfInputSize = preTrainedModel.classifier[0].in_features
+    
+    # DenseNet has just a Linear layer in the clf
+    else:
+        clfInputSize = preTrainedModel.classifier.in_features
+   
     clfOutputSize = output
     
     clf = nn.Sequential(OrderedDict([
