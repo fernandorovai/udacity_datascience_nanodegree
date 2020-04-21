@@ -4,6 +4,16 @@ import pandas as pd
 
 # load data into pandas dataframe
 def load_data(messages_filepath, categories_filepath):
+        """
+    Loads messages and categories from CSV files and returns them as pandas dataframes
+    
+    Input:
+        messages_filepath: CSV with messages
+        categories_filepath: CSV of categories
+    Returns:
+        df: Merged Csvs without preprocessing
+    """
+        
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
 
@@ -14,7 +24,14 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+     """
+    Clear received dataframe from load_data
     
+    Input:
+        df: "load_data" dataframe
+    Returns:
+        df: Cleaned data frame.
+    """
     # split categories by delimiter ;
     categories = df.categories.str.split(";", expand=True)
 
@@ -50,6 +67,16 @@ def clean_data(df):
     
 
 def save_data(df, database_filename):
+     """
+    Saves dataframe into SQLite database with a desired filename.
+    
+    Input:
+        df: Clean data frame from `clean_data`
+        database_filename: database filename
+    Returns:
+        None
+    """
+        
     engine = create_engine('sqlite:///'+database_filename)
     print(df)
     df.to_sql('msgs', engine, index=False)  

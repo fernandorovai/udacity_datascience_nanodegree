@@ -1,6 +1,24 @@
 # Disaster Response Pipeline Project
 
-### Instructions:
+## Project Motivation
+The idea of this project is to use NLP and logistic regression to analyze and classify disaster messages from Figure Eight 
+
+## Files structure
+    .
+    ├── app     
+    │   ├── run.py                           # Flask file that runs app
+    │   └── templates   
+    │       ├── go.html                      # Classification result page of web app
+    │       └── master.html                  # Main page of web app    
+    ├── data                   
+    │   ├── disaster_categories.csv          # Dataset including all the categories  
+    │   ├── disaster_messages.csv            # Dataset including all the messages
+    │   └── process_data.py                  # Data cleaning
+    ├── models
+    │   └── train_classifier.py              # Train ML model           
+    └── README.md
+
+### Instructions: (Run run.py directly if DisasterResponse.db and claasifier.pkl already exist.)
 1. Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database

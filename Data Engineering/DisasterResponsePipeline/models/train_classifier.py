@@ -19,6 +19,17 @@ from sklearn.multiclass import OneVsRestClassifier
 
 # Opens database, extracts data to a dataframe and return X and Y
 def load_data(database_filepath):
+    """
+    Loads data from database
+    
+    Input:
+        database_filepath: String, path to database to connect
+    Returns:
+        X: Dataframe, X data for training and testing
+        Y: Dataframe, labels for X data, also for training and testing
+        category_names: Names for categories in Y
+    """
+        
     engine = create_engine(f'sqlite:///{database_filepath}')
     df = pd.read_sql_table("msgs", engine.connect())
     X = df["message"]
@@ -26,6 +37,15 @@ def load_data(database_filepath):
     return X,Y, Y.columns
 
 def tokenize(text):
+    """
+    Transform to lower case, remove symbols and numbers, tokenize and remove stopwords
+    
+    Input:
+        text: String, tweet from a supposed natural disaster event
+    Returns:
+        clean_tokens: List of strings, tokenized and clean words
+    """
+    
     textVal = text.lower() #transform all to lowercase
     textVal = re.sub(r"[^a-zA-Z]", " ", textVal) #replace symbols / accents
     tokens = word_tokenize(textVal) #tokenize words
@@ -33,7 +53,14 @@ def tokenize(text):
     return tokens
 
 def build_model():
+     """
+    Creates machine learning pipeline for learning
     
+    Input:
+        None:
+    Returns:
+        pipeline: Pipeline with tokenization, tfidf embedding extraction and classifier
+    """
     # stablish the pipeline: Tokenize using our custom function, apply TF-IDF for getting embeddings and train the classifier
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
@@ -45,6 +72,20 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate model in X and Y data
+    
+    Go through each category name and evaluate using X and Y
+    
+    Input:
+        model: Model trained on X_train and Y_train
+        X_test: Dataframe, validation data for model
+        Y_test: Dataframe, actual labels for the test data in X
+        category_names: List of strings, categories to be evaluated
+    Returns:
+        None: Prints out report to terminal
+    """
+        
     Y_pred = model.predict(X_test)
 
     for i, col in enumerate(category_names):    
@@ -54,6 +95,16 @@ def evaluate_model(model, X_test, Y_test, category_names):
         print(classification_report(y_true, y_pred, target_names=target_names))
 
 def save_model(model, model_filepath):
+    """
+    Saves model as a pickle file to model_filepath
+    
+    Input:
+        model: pipeline/model, to be pickled for later use
+        model_filepath: String, filepath where model will be saved
+    Returns:
+        None: Pickle file will be created at model_path
+    """
+        
     joblib.dump(model, model_filepath)
 
 
